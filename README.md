@@ -224,7 +224,7 @@ import java.util.*;
 
 class PGraph {
 
-  public void Prim(int G[][], int V) {
+    public void Prim(int G[][], int V) {
 
     int INF = 9999999;
 
@@ -265,10 +265,10 @@ class PGraph {
     }
   }
 
-  public static void main(String[] args) {
-    PGraph g = new PGraph();
-    Scanner sc = new Scanner(System.in);
-    // number of vertices in grapj
+	  public static void main(String[] args) {
+	    PGraph g = new PGraph();
+	    Scanner sc = new Scanner(System.in);
+	    // number of vertices in grapj
 
     System.out.println("Enter the number of vertices:\n");
     int V = sc.nextInt();
@@ -419,10 +419,10 @@ fractional knapsack:
 
 import java.util.*;
 
-// Class to represent an item
-class Item {
-    int value;
-    int weight;
+	// Class to represent an item
+	class Item {
+   	 int value;
+    	int weight;
 
     public Item(int value, int weight) {
         this.value = value;
@@ -491,10 +491,10 @@ public class FractionalKnapsack {
 
 import java.util.*;
 
-// Class to represent an item
-class Item {
-    int value;
-    int weight;
+
+	class Item {
+    	int value;
+    	int weight;
 
     public Item(int value, int weight) {
         this.value = value;
@@ -608,9 +608,9 @@ public class LongestCommonSubsequence {
         int n = S2.length();
 	StringBuilder lcsString = new StringBuilder();
 
- int length = lcs(S1, S2, m, n, lcsString);
+	 int length = lcs(S1, S2, m, n, lcsString);
 
- System.out.println("Length of LCS is: " + length);
+ 	System.out.println("Length of LCS is: " + length);
         System.out.println("Longest Common Subsequence is: " + lcsString.reverse().toString());
 	
     }
@@ -624,6 +624,7 @@ Dijkstra’s Algorithm:
 import java.util.*;
 
 public class ShortestPath {
+
     static final int V = 9; // Number of vertices in the graph
 
     // A utility function to find the vertex with the minimum distance value
@@ -896,11 +897,13 @@ KMP string matching
 
 
 class KMP_String_Matching {
+
 	void KMPSearch(String pat, String txt)
 	{
+ 
 		int M = pat.length();
 		int N = txt.length();
-		// create lps[] that will hold the longest
+
 		// prefix suffix values for pattern
 		int lps[] = new int[M];
 		int j = 0; // index for pat[]
