@@ -1,8 +1,8 @@
 Insertion sort:
 
-import java.util.Arrays;
+    import java.util.Arrays;
 
-public class InsertionSort {
+    public class InsertionSort {
 
     public static void insertionSort(int[] arr) {
         int n = arr.length;
@@ -37,7 +37,7 @@ public class InsertionSort {
 
         System.out.println("Sorted Array: " + Arrays.toString(arr));
     }
-}
+    }
 
 
 
@@ -47,7 +47,7 @@ selection sort:
 
 import java.util.Arrays;
 
-public class SelectionSort {
+    public class SelectionSort {
 
     public static void selectionSort(int[] arr) {
         int n = arr.length;
@@ -83,16 +83,16 @@ public class SelectionSort {
 
         System.out.println("Sorted Array: " + Arrays.toString(arr));
     }
-}
+    }
 
 
 
 
 Quick sort
 
-import java.util.Arrays;
+    import java.util.Arrays;
 
-public class QuickSort {
+    public class QuickSort {
 
     private static int quickSortCalls = 0;
 
@@ -143,17 +143,17 @@ public class QuickSort {
         System.out.println("Sorted Array: " + Arrays.toString(arr));
         System.out.println("Number of calls to Quick Sort: " + quickSortCalls);
     }
-}
+    }
 
 
 
 
 
-Merge Sort
+Merge Sort:
 
-import java.util.Arrays;
+    import java.util.Arrays;
 
-public class MergeSort {
+    public class MergeSort {
 
     private static int mergeSortCalls = 0;
 
@@ -211,18 +211,16 @@ public class MergeSort {
         System.out.println("Sorted Array: " + Arrays.toString(arr));
         System.out.println("Number of calls to Merge Sort: " + mergeSortCalls);
     }
-}
+    }
 
 
 
 
 Prims MST :
 
-// Prim's Algorithm in Java
+    import java.util.*;
 
-import java.util.*;
-
-class PGraph {
+    class PGraph {
 
     public void Prim(int G[][], int V) {
 
@@ -263,12 +261,11 @@ class PGraph {
       selected[y] = true;
       no_edge++;
     }
-  }
+    }
 
-	  public static void main(String[] args) {
-	    PGraph g = new PGraph();
-	    Scanner sc = new Scanner(System.in);
-	    // number of vertices in grapj
+    public static void main(String[] args) {
+	PGraph g = new PGraph();
+	Scanner sc = new Scanner(System.in);
 
     System.out.println("Enter the number of vertices:\n");
     int V = sc.nextInt();
@@ -282,17 +279,17 @@ class PGraph {
         }
     }
     g.Prim(G, V);
-  }
-}
+    }
+    }
 
 
 
 
 kruskal’s algo:
 
-import java.util.*;
+    import java.util.*;
   
-public class KruskalsMST { 
+    public class KruskalsMST { 
 
     static class Edge { 
         int src, dest, weight; 
@@ -410,31 +407,28 @@ public class KruskalsMST {
         subsets[i].parent 
             = findRoot(subsets, subsets[i].parent); 
         return subsets[i].parent; 
-    } 
-    
-}
+    }     
+    }
+
 
 
 fractional knapsack:
 
-import java.util.*;
+    import java.util.*;
 
-	// Class to represent an item
-	class Item {
+    class Item {
    	 int value;
-    	int weight;
+    	 int weight;
 
-    public Item(int value, int weight) {
-        this.value = value;
-        this.weight = weight;
+	public Item(int value, int weight) {
+	        this.value = value;
+	        this.weight = weight;
+    	}
     }
-}
 
-public class FractionalKnapsack {
+    public class FractionalKnapsack {
 
-    // Function to solve Fractional Knapsack problem
     public static void fractionalKnapsack(Item[] items, int capacity) {
-        // Sort items based on value-to-weight ratio (descending order)
         Arrays.sort(items, (a, b) -> Double.compare((double)b.value / b.weight, (double)a.value / a.weight));
 
         double totalProfit = 0.0;
@@ -481,7 +475,7 @@ public class FractionalKnapsack {
 
         scanner.close();
     }
-}
+    }
 
 
 
@@ -489,25 +483,21 @@ public class FractionalKnapsack {
 
 0/1 knapsack:
 
-import java.util.*;
+    import java.util.*;
 
-
-	class Item {
+    class Item {
     	int value;
     	int weight;
 
-    public Item(int value, int weight) {
-        this.value = value;
-        this.weight = weight;
+	public Item(int value, int weight) {
+	        this.value = value;
+	        this.weight = weight;
+	}
     }
-}
 
-public class ZeroOneKnapsack {
+    public class ZeroOneKnapsack {
 
-    // Function to solve 0/1 knapsack problem
     public static void zeroOneKnapsack(Item[] items, int n, int capacity) {
-        // Initialize the table to store the maximum value that can be obtained
-        // for each combination of items and capacities
         int[][] table = new int[n + 1][capacity + 1];
 
         // Populate the table using dynamic programming
@@ -569,16 +559,132 @@ public class ZeroOneKnapsack {
 
         scanner.close();
     }
-}
+    }
+
+
+
+
+
+bellman ford:
+
+    import java.util.*;
+
+    public class BellmanFordSSSP {
+
+    static final int INF = Integer.MAX_VALUE;
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter the number of vertices: ");
+        int V = scanner.nextInt();
+
+        // Create the adjacency matrix for the graph
+        int[][] graph = new int[V][V];
+        System.out.println("Enter the adjacency matrix (Enter INF for no edge): ");
+        for (int i = 0; i < V; i++) {
+            for (int j = 0; j < V; j++) {
+                graph[i][j] = scanner.nextInt();
+                if (graph[i][j] == -1) {
+                    graph[i][j] = INF;
+                }
+            }
+        }
+
+        System.out.print("Enter the source vertex: ");
+        int source = scanner.nextInt();
+        scanner.close();
+
+        bellmanFord(graph, V, source);
+    }
+
+    public static void bellmanFord(int[][] graph, int V, int source) {
+        int[] dist = new int[V];
+        int[] pred = new int[V];
+        Arrays.fill(dist, INF);
+        Arrays.fill(pred, -1);
+        dist[source] = 0;
+
+        // Relax edges V-1 times
+        for (int count = 0; count < V - 1; count++) {
+            for (int u = 0; u < V; u++) {
+                for (int v = 0; v < V; v++) {
+                    if (graph[u][v] != INF) {
+                        if (dist[u] != INF && dist[u] + graph[u][v] < dist[v]) {
+                            dist[v] = dist[u] + graph[u][v];
+                            pred[v] = u;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Check for negative weight cycles
+        for (int u = 0; u < V; u++) {
+            for (int v = 0; v < V; v++) {
+                if (graph[u][v] != INF) {
+                    if (dist[u] != INF && dist[u] + graph[u][v] < dist[v]) {
+                        System.out.println("Graph contains negative weight cycle!");
+                        return;
+                    }
+                }
+            }
+        }
+
+        // Print the final distance (D) matrix
+        System.out.println("Final Distance Array (D):");
+        for (int i = 0; i < V; i++) {
+            System.out.print(dist[i] + " ");
+        }
+        System.out.println();
+
+        // Print the predecessor (Pi) matrix
+        System.out.println("\nPredecessor Array (Pi):");
+        for (int i = 0; i < V; i++) {
+            System.out.print(pred[i] + " ");
+        }
+        System.out.println();
+
+        // Print shortest paths from source vertex
+        System.out.println("\nShortest Paths from Source Vertex " + source + ":");
+        for (int i = 0; i < V; i++) {
+            if (i != source) {
+                System.out.print("Path to " + i + ": ");
+                printPath(pred, source, i);
+                System.out.println(" (Distance = " + dist[i] + ")");
+            }
+        }
+    }
+
+    // Utility function to print the path from source to destination using predecessor array
+    private static void printPath(int[] pred, int source, int destination) {
+        List<Integer> path = new ArrayList<>();
+        for (int i = destination; i != source; i = pred[i]) {
+            path.add(i);
+        }
+        path.add(source);
+        Collections.reverse(path);
+        for (int i = 0; i < path.size(); i++) {
+            System.out.print(path.get(i) + " ");
+        }
+    }
+    }
+
+
+
+
+
+
+
 
 
 
 LCS:
 
-import java.io.*;
-import java.util.*;
+     import java.io.*;
+     import java.util.*;
 
-public class LongestCommonSubsequence {
+    public class LongestCommonSubsequence {
 
     int lcs(String X, String Y, int m, int n, StringBuilder lcsString) {
         if (m == 0 || n == 0) {
@@ -614,21 +720,19 @@ public class LongestCommonSubsequence {
         System.out.println("Longest Common Subsequence is: " + lcsString.reverse().toString());
 	
     }
-}
+    }
 
 
 
 
 Dijkstra’s Algorithm:
 
-import java.util.*;
+    import java.util.*;
 
-public class ShortestPath {
+    public class ShortestPath {
 
     static final int V = 9; // Number of vertices in the graph
 
-    // A utility function to find the vertex with the minimum distance value
-    // from the set of vertices not yet included in the shortest path tree
     int minDistance(int dist[], boolean sptSet[]) {
         int min = Integer.MAX_VALUE;
         int minIndex = -1;
@@ -737,7 +841,7 @@ public class ShortestPath {
         ShortestPath sp = new ShortestPath();
         sp.dijkstra(graph, source);
     }
-}
+    }
 
 
 
@@ -745,9 +849,9 @@ public class ShortestPath {
 
 Floyd warshall:
 
-import java.util.Arrays;
-
-public class FloydWarshall {
+    import java.util.Arrays;
+	
+    public class FloydWarshall {
 
     static final int INF = Integer.MAX_VALUE; // Represents infinity (no direct path)
 
@@ -781,10 +885,6 @@ public class FloydWarshall {
                 }
             }
         }
-
-
-
-
 
 
         // Floyd-Warshall algorithm to find all pairs shortest paths
@@ -844,7 +944,100 @@ public class FloydWarshall {
             System.out.print(v + " ");
         }
     }
-}
+    }
+
+
+NQUEEN:
+
+    public class NQueenProblem {
+
+	final int N = 4;
+
+	// A utility function to print solution
+	void printSolution(int board[][])
+	{
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N; j++) {
+				if (board[i][j] == 1)
+					System.out.print("Q ");
+				else
+					System.out.print(". ");
+			}
+			System.out.println();
+		}
+	}
+
+
+	boolean isSafe(int board[][], int row, int col)
+	{
+		int i, j;
+
+		// Check this row on left side
+		for (i = 0; i < col; i++)
+			if (board[row][i] == 1)
+				return false;
+
+		// Check upper diagonal on left side
+		for (i = row, j = col; i >= 0 && j >= 0; i--, j--)
+			if (board[i][j] == 1)
+				return false;
+
+		// Check lower diagonal on left side
+		for (i = row, j = col; j >= 0 && i < N; i++, j--)
+			if (board[i][j] == 1)
+				return false;
+
+		return true;
+	}
+
+
+	boolean solveNQUtil(int board[][], int col)
+	{
+		// Base case: If all queens are placed
+		// then return true
+		if (col >= N)
+			return true;
+
+		for (int i = 0; i < N; i++) {
+			
+			if (isSafe(board, i, col)) {
+				board[i][col] = 1;
+
+				if (solveNQUtil(board, col + 1) == true)
+					return true;
+
+
+				board[i][col] = 0; // BACKTRACK
+			}
+		}
+
+		return false;
+	}
+
+
+	boolean solveNQ()
+	{
+		int board[][] = { { 0, 0, 0, 0 },
+				{ 0, 0, 0, 0 },
+				{ 0, 0, 0, 0 },
+				{ 0, 0, 0, 0 } };
+
+		if (solveNQUtil(board, 0) == false) {
+			System.out.print("Solution does not exist");
+			return false;
+		}
+
+		printSolution(board);
+		return true;
+	}
+
+	// Driver program to test above function
+	public static void main(String args[])
+	{
+		NQueenProblem Queen = new NQueenProblem();
+		Queen.solveNQ();
+	}
+    }
 
 
 
@@ -853,7 +1046,7 @@ public class FloydWarshall {
 
 sum of subsets:
 
-public class SubsetSumCount {
+    public class SubsetSumCount {
 
     public static int countSubsetSumCalls(int[] arr, int n, int sum) {
         // Base cases
@@ -880,17 +1073,17 @@ public class SubsetSumCount {
 
         System.out.println("Total number of recursive calls: " + totalCalls);
     }
-}
+    }
 
 
 
 
 
 
-KMP string matching
+KMP string matching:
 
 
-class KMP_String_Matching {
+    class KMP_String_Matching {
 
 	void KMPSearch(String pat, String txt)
 	{
@@ -913,16 +1106,12 @@ class KMP_String_Matching {
 				i++;
 			}
 			if (j == M) {
-				System.out.println("Found pattern "
-								+ "at index " + (i - j));
+				System.out.println("Found pattern at index " + (i - j));
 				j = lps[j - 1];
 			}
 
 			// mismatch after j matches
-			else if (i < N
-					&& pat.charAt(j) != txt.charAt(i)) {
-				// Do not match lps[0..lps[j-1]] characters,
-				// they will match anyway
+			else if (i < N && pat.charAt(j) != txt.charAt(i)) {
 				if (j != 0)
 					j = lps[j - 1];
 				else
@@ -969,12 +1158,12 @@ class KMP_String_Matching {
 		String pat = "ABABCABAB";
 		new KMP_String_Matching().KMPSearch(pat, txt);
 	}
-}
+    }
 
 
 Rabin Karp:
 
-public class Main {
+    public class Main {
 
 	public final static int d = 256;
 
@@ -1018,16 +1207,13 @@ public class Main {
 				// if p == t and pat[0...M-1] = txt[i, i+1,
 				// ...i+M-1]
 				if (j == M)
-					System.out.println(
-						"Pattern found at index " + i);
+					System.out.println( "Pattern found at index " + i);
 			}
 
 			// Calculate hash value for next window of text:
 			// Remove leading digit, add trailing digit
 			if (i < N - M) {
-				t = (d * (t - txt.charAt(i) * h)
-					+ txt.charAt(i + M))
-					% q;
+				t = (d * (t - txt.charAt(i) * h) + txt.charAt(i + M)) % q;
 
 				// We might get negative value of t,
 				// converting it to positive
@@ -1049,7 +1235,7 @@ public class Main {
 		// Function Call
 		search(pat, txt, q);
 	}
-}
+    }
 
 
 
