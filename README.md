@@ -977,11 +977,8 @@ class KMP_String_Matching {
 
 Rabin Karp:
 
-// Following program is a Java implementation
-// of Rabin Karp Algorithm given in the CLRS book
-
 public class Main {
-	// d is the number of characters in the input alphabet
+
 	public final static int d = 256;
 
 	/* pat -> pattern
