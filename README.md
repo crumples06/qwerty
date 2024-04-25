@@ -1,4 +1,4 @@
-#Insertion sort:
+## Insertion sort:
 
     import java.util.Arrays;
 
@@ -43,7 +43,7 @@
 
 
 
-selection sort:
+## selection sort:
 
     import java.util.Arrays;
 
@@ -88,7 +88,7 @@ selection sort:
 
 
 
-Quick sort
+## Quick sort
 
     import java.util.Arrays;
 
@@ -149,7 +149,7 @@ Quick sort
 
 
 
-Merge Sort:
+## Merge Sort:
 
     import java.util.Arrays;
 
@@ -216,7 +216,7 @@ Merge Sort:
 
 
 
-Prims MST :
+## Prims MST :
 
     import java.util.*;
 
@@ -285,7 +285,7 @@ Prims MST :
 
 
 
-kruskal’s algo:
+## kruskal’s algo:
 
     import java.util.*;
   
@@ -412,7 +412,7 @@ kruskal’s algo:
 
 
 
-fractional knapsack:
+## fractional knapsack:
 
     import java.util.*;
 
@@ -481,7 +481,7 @@ fractional knapsack:
 
 
 
-0/1 knapsack:
+## 0/1 knapsack:
 
     import java.util.*;
 
@@ -565,7 +565,7 @@ fractional knapsack:
 
 
 
-bellman ford:
+## bellman ford:
 
     import java.util.*;
 
@@ -674,12 +674,7 @@ bellman ford:
 
 
 
-
-
-
-
-
-LCS:
+## LCS:
 
      import java.io.*;
      import java.util.*;
@@ -725,7 +720,7 @@ LCS:
 
 
 
-Dijkstra’s Algorithm:
+## Dijkstra’s Algorithm:
 
     import java.util.*;
 
@@ -847,7 +842,7 @@ Dijkstra’s Algorithm:
 
 
 
-Floyd warshall:
+## Floyd warshall:
 
     import java.util.Arrays;
 	
@@ -947,7 +942,7 @@ Floyd warshall:
     }
 
 
-NQUEEN:
+## NQUEEN:
 
     public class NQueenProblem {
 
@@ -1044,7 +1039,7 @@ NQUEEN:
 
 
 
-sum of subsets:
+## sum of subsets:
 
     public class SubsetSumCount {
 
@@ -1080,7 +1075,7 @@ sum of subsets:
 
 
 
-KMP string matching:
+## KMP string matching:
 
 
     class KMP_String_Matching {
@@ -1161,7 +1156,7 @@ KMP string matching:
     }
 
 
-Rabin Karp:
+## Rabin Karp:
 
     public class Main {
 
@@ -1246,7 +1241,7 @@ Rabin Karp:
 
 
 
-note:
+## note:
 
 public static void printPath(int[] pred, int source, int destination) {
     // Base case: If the destination is the source vertex
