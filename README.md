@@ -666,25 +666,19 @@ public class ShortestPath {
         }
     }
 
-    // A utility function to print the path using the predecessor matrix (Pi)
-    void printPath(int pred[], int source, int destination) {
-        LinkedList<Integer> path = new LinkedList<>();
-        int step = destination;
-        path.add(step);
-        while (pred[step] != -1) {
-            path.addFirst(pred[step]);
-            step = pred[step];
-        }
-        path.addFirst(source);
-
-        Iterator<Integer> iterator = path.iterator();
-        while (iterator.hasNext()) {
-            System.out.print(iterator.next());
-            if (iterator.hasNext()) {
-                System.out.print(" -> ");
-            }
-        }
-    }
+	   public static void printPath(int[] pred, int source, int destination) {
+	    // Base case: If the destination is the source vertex
+	    if (destination == source) {
+	        System.out.print(source);
+	    } else if (pred[destination] == -1) {
+	        // If there's no predecessor (unreachable)
+	        System.out.print("No path from " + source + " to " + destination);
+	    } else {
+	        // Recursively print the path from source to predecessor of destination
+	        printPath(pred, source, pred[destination]);
+	        System.out.print(" -> " + destination);
+	    }
+	}
 
     // Function that implements Dijkstra's single source shortest path algorithm
     void dijkstra(int graph[][], int src) {
