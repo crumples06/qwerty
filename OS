@@ -9,7 +9,6 @@
         System.out.print("Enter the number of processes: ");
         int n = scanner.nextInt();
 
-        int[] arrivalTime = new int[n];
         int[] burstTime = new int[n];
         int[] waitingTime = new int[n];
         int[] turnaroundTime = new int[n];
@@ -52,6 +51,403 @@
         scanner.close();
     }
 }
+
+## SJF:
+
+  import java.util.Arrays;
+ import java.util.Scanner;
+
+ public class SJF {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int n, i, j;
+        float totalWaitingTime = 0, totalTurnaroundTime = 0;
+        
+        System.out.print("Enter the number of processes: ");
+        n = scanner.nextInt();
+        
+        int[] burstTime = new int[n];
+        int[] waitingTime = new int[n];
+        int[] turnaroundTime = new int[n];
+        
+        System.out.println("Enter the burst time for each process:");
+        for (i = 0; i < n; i++) {
+            System.out.print("Process " + (i + 1) + ": ");
+            burstTime[i] = scanner.nextInt();
+        }
+
+        Arrays.sort(burstTime);
+        
+        // Calculate waiting time for each process
+        waitingTime[0] = 0; // First process has 0 waiting time
+        for (i = 1; i < n; i++) {
+            waitingTime[i] = waitingTime[i - 1] + burstTime[i - 1];
+            totalWaitingTime += waitingTime[i];
+        }
+        
+        // Calculate turnaround time for each process
+        for (i = 0; i < n; i++) {
+            turnaroundTime[i] = waitingTime[i] + burstTime[i];
+            totalTurnaroundTime += turnaroundTime[i];
+        }
+        
+        // Calculate average waiting time and average turnaround time
+        float avgWaitingTime = totalWaitingTime / n;
+        float avgTurnaroundTime = totalTurnaroundTime / n;
+        
+        // Display results
+        System.out.println("\nProcess\tBurst Time\tWaiting Time\tTurnaround Time");
+        for (i = 0; i < n; i++) {
+            System.out.println((i + 1) + "\t\t" + burstTime[i] + "\t\t\t" + waitingTime[i] + "\t\t\t" + turnaroundTime[i]);
+        }
+        System.out.printf("\nAverage Waiting Time: %.2f\n", avgWaitingTime);
+        System.out.printf("Average Turnaround Time: %.2f\n", avgTurnaroundTime);
+        
+        scanner.close();
+    }
+}
+
+
+
+
+## Non preemptive Priority scheduling:
+
+import java.util.Scanner;
+import java.util.Arrays;
+
+public class PriorityScheduling {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter the number of processes: ");
+        int n = scanner.nextInt();
+
+        int[] burstTime = new int[n];
+        int[] priority = new int[n];
+        int[] waitingTime = new int[n];
+        int[] turnaroundTime = new int[n];
+
+        // Input burst time and priority for each process
+        System.out.println("Enter burst time and priority for each process:");
+        for (int i = 0; i < n; i++) {
+            System.out.print("Process " + (i + 1) + " burst time and priority: ");
+            burstTime[i] = scanner.nextInt();
+            priority[i] = scanner.nextInt();
+        }
+
+        // Sort processes based on priority (higher priority first)
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 0; j < n - i - 1; j++) {
+                if (priority[j] > priority[j + 1]) {
+                    // Swap priority
+                    int tempPriority = priority[j];
+                    priority[j] = priority[j + 1];
+                    priority[j + 1] = tempPriority;
+                    // Swap burst time
+                    int tempBurstTime = burstTime[j];
+                    burstTime[j] = burstTime[j + 1];
+                    burstTime[j + 1] = tempBurstTime;
+                }
+            }
+        }
+
+        // Calculate waiting time and turnaround time for each process
+        waitingTime[0] = 0;
+        turnaroundTime[0] = burstTime[0];
+        for (int i = 1; i < n; i++) {
+            waitingTime[i] = waitingTime[i - 1] + burstTime[i - 1];
+            turnaroundTime[i] = waitingTime[i] + burstTime[i];
+        }
+
+        // Calculate total waiting time and total turnaround time
+        double totalWaitingTime = Arrays.stream(waitingTime).sum();
+        double totalTurnaroundTime = Arrays.stream(turnaroundTime).sum();
+
+        // Calculate average waiting time and average turnaround time
+        double avgWaitingTime = totalWaitingTime / n;
+        double avgTurnaroundTime = totalTurnaroundTime / n;
+
+        // Print results
+        System.out.println("\nProcess\tPriority\tBurst Time\tWaiting Time\tTurnaround Time");
+        for (int i = 0; i < n; i++) {
+            System.out.println((i + 1) + "\t\t" + priority[i] + "\t\t\t" + burstTime[i] + "\t\t\t" +
+                    waitingTime[i] + "\t\t\t" + turnaroundTime[i]);
+        }
+        System.out.println("\nAverage Waiting Time: " + avgWaitingTime);
+        System.out.println("Average Turnaround Time: " + avgTurnaroundTime);
+
+        scanner.close();
+    }
+}
+
+
+
+
+## Round Robin:
+
+import java.util.Scanner;
+
+public class RoundRobin {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter the number of processes: ");
+        int n = scanner.nextInt();
+        
+        System.out.print("Enter the time quantum: ");
+        int quantum = scanner.nextInt();
+
+        int[] burstTime = new int[n];
+        int[] waitingTime = new int[n];
+        int[] turnaroundTime = new int[n];
+
+        System.out.println("Enter the burst time for each process:");
+        for (int i = 0; i < n; i++) {
+            System.out.print("Process " + (i + 1) + ": ");
+            burstTime[i] = scanner.nextInt();
+            waitingTime[i] = 0; // Initialize waiting time for each process
+        }
+
+        int remaining = n;
+        int currentTime = 0;
+        while (remaining > 0) {
+            for (int i = 0; i < n; i++) {
+                if (burstTime[i] > 0) {
+                    if (burstTime[i] <= quantum) {
+                        currentTime += burstTime[i];
+                        turnaroundTime[i] = currentTime;
+                        burstTime[i] = 0;
+                        remaining--;
+                    } else {
+                        currentTime += quantum;
+                        burstTime[i] -= quantum;
+                        waitingTime[i] += currentTime;
+                    }
+                }
+            }
+        }
+
+        // Calculate total waiting time and total turnaround time
+        float totalWaitingTime = 0;
+        float totalTurnaroundTime = 0;
+        for (int i = 0; i < n; i++) {
+            totalWaitingTime += waitingTime[i];
+            totalTurnaroundTime += turnaroundTime[i];
+        }
+
+        // Calculate average waiting time and average turnaround time
+        float avgWaitingTime = totalWaitingTime / n;
+        float avgTurnaroundTime = totalTurnaroundTime / n;
+
+        // Display results
+        System.out.println("\nProcess\tBurst Time\tWaiting Time\tTurnaround Time");
+        for (int i = 0; i < n; i++) {
+            System.out.println((i + 1) + "\t\t" + burstTime[i] + "\t\t\t" + waitingTime[i] + "\t\t\t" + turnaroundTime[i]);
+        }
+        System.out.printf("\nAverage Waiting Time: %.2f\n", avgWaitingTime);
+        System.out.printf("Average Turnaround Time: %.2f\n", avgTurnaroundTime);
+
+        scanner.close();
+    }
+}
+
+
+
+
+## First Fit Memory Allocation Technique:
+
+import java.util.Scanner;
+
+public class FirstFitMemoryAllocation {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter the number of memory blocks: ");
+        int numBlocks = scanner.nextInt();
+
+        int[] blockSize = new int[numBlocks];
+        boolean[] allocated = new boolean[numBlocks];
+
+        System.out.println("Enter the size of each memory block:");
+        for (int i = 0; i < numBlocks; i++) {
+            System.out.print("Memory Block " + (i + 1) + ": ");
+            blockSize[i] = scanner.nextInt();
+            allocated[i] = false;
+        }
+
+        System.out.print("Enter the number of processes: ");
+        int numProcesses = scanner.nextInt();
+
+        int[] processSize = new int[numProcesses];
+        int[] allocatedBlock = new int[numProcesses];
+
+        System.out.println("Enter the size of each process:");
+        for (int i = 0; i < numProcesses; i++) {
+            System.out.print("Process " + (i + 1) + ": ");
+            processSize[i] = scanner.nextInt();
+        }
+
+        // Allocate memory blocks to processes using First Fit
+        for (int i = 0; i < numProcesses; i++) {
+            for (int j = 0; j < numBlocks; j++) {
+                if (!allocated[j] && blockSize[j] >= processSize[i]) {
+                    allocatedBlock[i] = j;
+                    allocated[j] = true;
+                    break;
+                }
+            }
+        }
+
+        // Print allocation details
+        System.out.println("\nProcess\tProcess Size\tAllocated Block");
+        for (int i = 0; i < numProcesses; i++) {
+            System.out.println((i + 1) + "\t\t" + processSize[i] + "\t\t\t" +
+                    (allocatedBlock[i] == -1 ? "Not Allocated" : allocatedBlock[i] + 1));
+        }
+
+        scanner.close();
+    }
+}
+
+
+
+
+## Best Fit Memory Allocation Technique:
+
+import java.util.Scanner;
+
+public class BestFitMemoryAllocation {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter the number of memory blocks: ");
+        int numBlocks = scanner.nextInt();
+
+        int[] blockSize = new int[numBlocks];
+        boolean[] allocated = new boolean[numBlocks];
+
+        System.out.println("Enter the size of each memory block:");
+        for (int i = 0; i < numBlocks; i++) {
+            System.out.print("Memory Block " + (i + 1) + ": ");
+            blockSize[i] = scanner.nextInt();
+            allocated[i] = false;
+        }
+
+        System.out.print("Enter the number of processes: ");
+        int numProcesses = scanner.nextInt();
+
+        int[] processSize = new int[numProcesses];
+        int[] allocatedBlock = new int[numProcesses];
+
+        System.out.println("Enter the size of each process:");
+        for (int i = 0; i < numProcesses; i++) {
+            System.out.print("Process " + (i + 1) + ": ");
+            processSize[i] = scanner.nextInt();
+        }
+
+        // Allocate memory blocks to processes using Best Fit
+        for (int i = 0; i < numProcesses; i++) {
+            int bestFitBlock = -1;
+            int minFragmentation = Integer.MAX_VALUE;
+            for (int j = 0; j < numBlocks; j++) {
+                if (!allocated[j] && blockSize[j] >= processSize[i]) {
+                    int fragmentation = blockSize[j] - processSize[i];
+                    if (fragmentation < minFragmentation) {
+                        minFragmentation = fragmentation;
+                        bestFitBlock = j;
+                    }
+                }
+            }
+            if (bestFitBlock != -1) {
+                allocatedBlock[i] = bestFitBlock;
+                allocated[bestFitBlock] = true;
+            } else {
+                allocatedBlock[i] = -1; // Not allocated
+            }
+        }
+
+        // Print allocation details
+        System.out.println("\nProcess\tProcess Size\tAllocated Block");
+        for (int i = 0; i < numProcesses; i++) {
+            System.out.println((i + 1) + "\t\t" + processSize[i] + "\t\t\t" +
+                    (allocatedBlock[i] == -1 ? "Not Allocated" : allocatedBlock[i] + 1));
+        }
+
+        scanner.close();
+    }
+}
+
+
+
+
+## Worst Fit Memory Allocation Technique:
+
+import java.util.Scanner;
+
+public class WorstFitMemoryAllocation {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter the number of memory blocks: ");
+        int numBlocks = scanner.nextInt();
+
+        int[] blockSize = new int[numBlocks];
+        boolean[] allocated = new boolean[numBlocks];
+
+        System.out.println("Enter the size of each memory block:");
+        for (int i = 0; i < numBlocks; i++) {
+            System.out.print("Memory Block " + (i + 1) + ": ");
+            blockSize[i] = scanner.nextInt();
+            allocated[i] = false;
+        }
+
+        System.out.print("Enter the number of processes: ");
+        int numProcesses = scanner.nextInt();
+
+        int[] processSize = new int[numProcesses];
+        int[] allocatedBlock = new int[numProcesses];
+
+        System.out.println("Enter the size of each process:");
+        for (int i = 0; i < numProcesses; i++) {
+            System.out.print("Process " + (i + 1) + ": ");
+            processSize[i] = scanner.nextInt();
+        }
+
+        // Allocate memory blocks to processes using Worst Fit
+        for (int i = 0; i < numProcesses; i++) {
+            int worstFitBlock = -1;
+            int maxFragmentation = Integer.MIN_VALUE;
+            for (int j = 0; j < numBlocks; j++) {
+                if (!allocated[j] && blockSize[j] >= processSize[i]) {
+                    int fragmentation = blockSize[j] - processSize[i];
+                    if (fragmentation > maxFragmentation) {
+                        maxFragmentation = fragmentation;
+                        worstFitBlock = j;
+                    }
+                }
+            }
+            if (worstFitBlock != -1) {
+                allocatedBlock[i] = worstFitBlock;
+                allocated[worstFitBlock] = true;
+            } else {
+                allocatedBlock[i] = -1; // Not allocated
+            }
+        }
+
+        // Print allocation details
+        System.out.println("\nProcess\tProcess Size\tAllocated Block");
+        for (int i = 0; i < numProcesses; i++) {
+            System.out.println((i + 1) + "\t\t" + processSize[i] + "\t\t\t" +
+                    (allocatedBlock[i] == -1 ? "Not Allocated" : allocatedBlock[i] + 1));
+        }
+
+        scanner.close();
+    }
+}
+
+
+
+
 
 
 
