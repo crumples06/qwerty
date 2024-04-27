@@ -448,6 +448,261 @@ public class WorstFitMemoryAllocation {
 
 
 
+## FIFO policy and calculate Hit ratio and Miss ratio:
+
+import java.util.*;
+
+public class FIFOPageReplacement {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter the number of pages: ");
+        int numPages = scanner.nextInt();
+
+        System.out.print("Enter the number of frames: ");
+        int numFrames = scanner.nextInt();
+
+        System.out.println("Enter the reference string:");
+        int[] pages = new int[numPages];
+        for (int i = 0; i < numPages; i++) {
+            pages[i] = scanner.nextInt();
+        }
+
+        int[] frames = new int[numFrames];
+        int pageFaults = 0;
+        int nextFrameIndex = 0;
+        int hitCount = 0;
+
+        // Initialize frames to -1, indicating empty
+        Arrays.fill(frames, -1);
+
+        // FIFO page replacement algorithm
+        for (int page : pages) {
+            boolean found = false;
+
+            // Check if page is already in a frame
+            for (int i = 0; i < numFrames; i++) {
+                if (frames[i] == page) {
+                    found = true;
+                    hitCount++;
+                    break;
+                }
+            }
+
+            if (!found) {
+                pageFaults++;
+                frames[nextFrameIndex] = page;
+                nextFrameIndex = (nextFrameIndex + 1) % numFrames;
+            }
+
+            System.out.println("Page " + page + ": " + Arrays.toString(frames));
+        }
+
+        float hitRatio = (float) hitCount / numPages;
+        float missRatio = 1 - hitRatio;
+
+        System.out.printf("\nPage Faults: %d\n", pageFaults);
+        System.out.printf("Hit Ratio: %.2f\n", hitRatio);
+        System.out.printf("Miss Ratio: %.2f\n", missRatio);
+
+        scanner.close();
+    }
+}
+
+
+
+
+## LRU policy and calculate Hit ratio and Miss ratio:
+
+import java.util.*;
+
+public class LRUPageReplacement {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter the number of frames: ");
+        int numFrames = scanner.nextInt();
+
+        System.out.print("Enter the number of pages: ");
+        int numPages = scanner.nextInt();
+
+        System.out.println("Enter the reference string (space-separated):");
+        int[] pageReference = new int[numPages];
+        for (int i = 0; i < numPages; i++) {
+            pageReference[i] = scanner.nextInt();
+        }
+
+        List<Integer> frames = new ArrayList<>();
+        int pageFaults = 0;
+        int hits = 0;
+
+        for (int page : pageReference) {
+            if (frames.contains(page)) {
+                frames.remove(Integer.valueOf(page)); // Remove the accessed page
+                frames.add(page); // Add it to the end to update its usage
+                hits++;
+            } else {
+                pageFaults++;
+                if (frames.size() == numFrames) {
+                    frames.remove(0); // Remove the least recently used page (first page)
+                }
+                frames.add(page); // Add the new page to the end
+            }
+        }
+
+        double hitRatio = (double) hits / numPages;
+        double missRatio = 1 - hitRatio;
+
+        System.out.println("\nPage Faults: " + pageFaults);
+        System.out.println("Hit Ratio: " + hitRatio);
+        System.out.println("Miss Ratio: " + missRatio);
+
+        scanner.close();
+    }
+}
+
+
+
+
+## Optimal policy and calculate Hit ratio and Miss ratio:
+
+import java.util.*;
+
+public class OptimalPageReplacement {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter the number of pages: ");
+        int numPages = scanner.nextInt();
+
+        System.out.print("Enter the number of frames: ");
+        int numFrames = scanner.nextInt();
+
+        System.out.println("Enter the reference string:");
+        int[] pages = new int[numPages];
+        for (int i = 0; i < numPages; i++) {
+            pages[i] = scanner.nextInt();
+        }
+
+        int[] frames = new int[numFrames];
+        int[] nextUse = new int[numFrames];
+        Arrays.fill(frames, -1);
+        Arrays.fill(nextUse, Integer.MAX_VALUE);
+
+        int pageFaults = 0;
+        int hitCount = 0;
+
+        for (int page : pages) {
+            boolean found = false;
+
+            for (int j = 0; j < numFrames; j++) {
+                if (frames[j] == page) {
+                    found = true;
+                    hitCount++;
+                    break;
+                }
+            }
+
+            if (!found) {
+                pageFaults++;
+                int farthestIndex = findFarthestIndex(frames, nextUse);
+                frames[farthestIndex] = page;
+                nextUse[farthestIndex] = 0;
+            }
+
+            for (int j = 0; j < numFrames; j++) {
+                if (frames[j] != -1) {
+                    nextUse[j]++;
+                }
+            }
+
+            System.out.print("Page " + page + ": ");
+            for (int frame : frames) {
+                System.out.print(frame + " ");
+            }
+            System.out.println();
+        }
+
+        float hitRatio = (float) hitCount / numPages;
+        float missRatio = 1 - hitRatio;
+
+        System.out.printf("\nHit Ratio: %.2f\n", hitRatio);
+        System.out.printf("Miss Ratio: %.2f\n", missRatio);
+
+        scanner.close();
+    }
+
+    private static int findFarthestIndex(int[] frames, int[] nextUse) {
+        int farthestIndex = 0;
+        for (int i = 1; i < frames.length; i++) {
+            if (nextUse[i] > nextUse[farthestIndex]) {
+                farthestIndex = i;
+            }
+        }
+        return farthestIndex;
+    }
+}
+
+
+
+
+## Memory Variable Technique (MVT):
+
+import java.util.Scanner;
+
+public class MemoryAllocation {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter the total memory available (in Bytes): ");
+        int totalMemory = scanner.nextInt();
+
+        int[] memoryProcesses = new int[10];
+        int numProcesses = 0;
+        int remainingMemory = totalMemory;
+
+        char choice = 'y';
+        while (choice == 'y' || choice == 'Y') {
+            System.out.printf("\nEnter memory required for process %d (in Bytes): ", numProcesses + 1);
+            int memoryRequired = scanner.nextInt();
+
+            if (memoryRequired <= remainingMemory) {
+                System.out.printf("\nMemory is allocated for Process %d", numProcesses + 1);
+                remainingMemory -= memoryRequired;
+                memoryProcesses[numProcesses++] = memoryRequired;
+            } else {
+                System.out.println("\nMemory is Full");
+                break;
+            }
+
+            System.out.print("\nDo you want to continue (y/n)? ");
+            choice = scanner.next().charAt(0);
+        }
+
+        System.out.printf("\n\nTotal Memory Available: %d\n", totalMemory);
+        System.out.println("\n\tPROCESS\t\tMEMORY ALLOCATED");
+        int totalAllocatedMemory = 0;
+        for (int i = 0; i < numProcesses; i++) {
+            System.out.printf("\n\t%d\t\t%d", i + 1, memoryProcesses[i]);
+            totalAllocatedMemory += memoryProcesses[i];
+        }
+        System.out.printf("\n\nTotal Memory Allocated is %d\n", totalMemory - remainingMemory);
+        System.out.printf("Total External Fragmentation is %d\n", remainingMemory);
+
+        scanner.close();
+    }
+}
+
+
+
+
+## MFT:
+
+
+
+
+
+
 
 
 
