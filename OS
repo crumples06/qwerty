@@ -187,69 +187,73 @@ public class PriorityScheduling {
 
 import java.util.Scanner;
 
+import java.util.Scanner;
+
 public class RoundRobin {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
+        // Input
         System.out.print("Enter the number of processes: ");
-        int n = scanner.nextInt();
-        
-        System.out.print("Enter the time quantum: ");
-        int quantum = scanner.nextInt();
+        int numOfProcesses = scanner.nextInt();
 
-        int[] burstTime = new int[n];
-        int[] waitingTime = new int[n];
-        int[] turnaroundTime = new int[n];
+        int[] burstTime = new int[numOfProcesses];
+        int[] remainingTime = new int[numOfProcesses];
+        int[] arrivalTime = new int[numOfProcesses];
 
         System.out.println("Enter the burst time for each process:");
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < numOfProcesses; i++) {
             System.out.print("Process " + (i + 1) + ": ");
             burstTime[i] = scanner.nextInt();
-            waitingTime[i] = 0; // Initialize waiting time for each process
+            remainingTime[i] = burstTime[i];
         }
 
-        int remaining = n;
+        System.out.println("Enter the arrival time for each process:");
+        for (int i = 0; i < numOfProcesses; i++) {
+            System.out.print("Arrival time for Process " + (i + 1) + ": ");
+            arrivalTime[i] = scanner.nextInt();
+        }
+
+        System.out.print("Enter the time quantum: ");
+        int timeQuantum = scanner.nextInt();
+
+        // Calculation
         int currentTime = 0;
-        while (remaining > 0) {
-            for (int i = 0; i < n; i++) {
-                if (burstTime[i] > 0) {
-                    if (burstTime[i] <= quantum) {
-                        currentTime += burstTime[i];
-                        turnaroundTime[i] = currentTime;
-                        burstTime[i] = 0;
-                        remaining--;
+        int[] waitingTime = new int[numOfProcesses];
+        int[] turnaroundTime = new int[numOfProcesses];
+
+        while (true) {
+            boolean allProcessesCompleted = true;
+
+            for (int i = 0; i < numOfProcesses; i++) {
+                if (remainingTime[i] > 0 && arrivalTime[i] <= currentTime) {
+                    allProcessesCompleted = false;
+
+                    if (remainingTime[i] <= timeQuantum) {
+                        currentTime += remainingTime[i];
+                        turnaroundTime[i] = currentTime - arrivalTime[i];
+                        waitingTime[i] = turnaroundTime[i] - burstTime[i];
+                        remainingTime[i] = 0;
                     } else {
-                        currentTime += quantum;
-                        burstTime[i] -= quantum;
-                        waitingTime[i] += currentTime;
+                        currentTime += timeQuantum;
+                        remainingTime[i] -= timeQuantum;
                     }
                 }
             }
+
+            if (allProcessesCompleted) break;
         }
 
-        // Calculate total waiting time and total turnaround time
-        float totalWaitingTime = 0;
-        float totalTurnaroundTime = 0;
-        for (int i = 0; i < n; i++) {
-            totalWaitingTime += waitingTime[i];
-            totalTurnaroundTime += turnaroundTime[i];
+        // Output
+        System.out.println("\nProcess\tBurst Time\tArrival Time\tWaiting Time\tTurnaround Time");
+        for (int i = 0; i < numOfProcesses; i++) {
+            System.out.println((i + 1) + "\t\t" + burstTime[i] + "\t\t\t" + arrivalTime[i] + "\t\t\t" + waitingTime[i] + "\t\t\t" + turnaroundTime[i]);
         }
-
-        // Calculate average waiting time and average turnaround time
-        float avgWaitingTime = totalWaitingTime / n;
-        float avgTurnaroundTime = totalTurnaroundTime / n;
-
-        // Display results
-        System.out.println("\nProcess\tBurst Time\tWaiting Time\tTurnaround Time");
-        for (int i = 0; i < n; i++) {
-            System.out.println((i + 1) + "\t\t" + burstTime[i] + "\t\t\t" + waitingTime[i] + "\t\t\t" + turnaroundTime[i]);
-        }
-        System.out.printf("\nAverage Waiting Time: %.2f\n", avgWaitingTime);
-        System.out.printf("Average Turnaround Time: %.2f\n", avgTurnaroundTime);
 
         scanner.close();
     }
 }
+
 
 
 
@@ -566,37 +570,24 @@ public class LRUPageReplacement {
 
 ## Optimal policy and calculate Hit ratio and Miss ratio:
 
-import java.util.*;
+import java.util.Scanner;
 
 public class OptimalPageReplacement {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        System.out.print("Enter the number of pages: ");
-        int numPages = scanner.nextInt();
-
-        System.out.print("Enter the number of frames: ");
-        int numFrames = scanner.nextInt();
-
-        System.out.println("Enter the reference string:");
-        int[] pages = new int[numPages];
-        for (int i = 0; i < numPages; i++) {
-            pages[i] = scanner.nextInt();
-        }
+        int[] pageReferences = { 7, 0, 1, 2, 0, 3, 0, 4, 2, 3, 0, 3, 2 };
+        int numPages = pageReferences.length;
+        int numFrames = 4;
 
         int[] frames = new int[numFrames];
-        int[] nextUse = new int[numFrames];
-        Arrays.fill(frames, -1);
-        Arrays.fill(nextUse, Integer.MAX_VALUE);
-
-        int pageFaults = 0;
         int hitCount = 0;
 
-        for (int page : pages) {
+        for (int i = 0; i < numPages; i++) {
+            // Page found in a frame : HIT
             boolean found = false;
-
             for (int j = 0; j < numFrames; j++) {
-                if (frames[j] == page) {
+                if (frames[j] == pageReferences[i]) {
                     found = true;
                     hitCount++;
                     break;
@@ -604,44 +595,42 @@ public class OptimalPageReplacement {
             }
 
             if (!found) {
-                pageFaults++;
-                int farthestIndex = findFarthestIndex(frames, nextUse);
-                frames[farthestIndex] = page;
-                nextUse[farthestIndex] = 0;
-            }
-
-            for (int j = 0; j < numFrames; j++) {
-                if (frames[j] != -1) {
-                    nextUse[j]++;
+                // Page not found in a frame : MISS
+                if (i < numFrames) {
+                    frames[i] = pageReferences[i];
+                } else {
+                    int res = -1;
+                    int farthest = i;
+                    for (int j = 0; j < numFrames; j++) {
+                        int k;
+                        for (k = i; k < numPages; k++) {
+                            if (frames[j] == pageReferences[k]) {
+                                if (k > farthest) {
+                                    farthest = k;
+                                    res = j;
+                                }
+                                break;
+                            }
+                        }
+                        if (k == numPages) {
+                            res = j;
+                            break;
+                        }
+                    }
+                    frames[res] = pageReferences[i];
                 }
             }
-
-            System.out.print("Page " + page + ": ");
-            for (int frame : frames) {
-                System.out.print(frame + " ");
-            }
-            System.out.println();
         }
 
-        float hitRatio = (float) hitCount / numPages;
-        float missRatio = 1 - hitRatio;
+        int missCount = numPages - hitCount;
 
-        System.out.printf("\nHit Ratio: %.2f\n", hitRatio);
-        System.out.printf("Miss Ratio: %.2f\n", missRatio);
+        System.out.println("Number of hits: " + hitCount);
+        System.out.println("Number of misses: " + missCount);
 
         scanner.close();
     }
-
-    private static int findFarthestIndex(int[] frames, int[] nextUse) {
-        int farthestIndex = 0;
-        for (int i = 1; i < frames.length; i++) {
-            if (nextUse[i] > nextUse[farthestIndex]) {
-                farthestIndex = i;
-            }
-        }
-        return farthestIndex;
-    }
 }
+
 
 
 
@@ -698,6 +687,553 @@ public class MemoryAllocation {
 
 ## MFT:
 
+import java.util.Scanner;
+
+public class MemoryAllocation {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter the total memory available (in Bytes): ");
+        int totalMemory = scanner.nextInt();
+
+        System.out.print("Enter the block size (in Bytes): ");
+        int blockSize = scanner.nextInt();
+
+        int numBlocks = totalMemory / blockSize;
+        int externalFragmentation = totalMemory - numBlocks * blockSize;
+
+        System.out.print("\nEnter the number of processes: ");
+        int numProcesses = scanner.nextInt();
+        int[] memoryProcesses = new int[numProcesses];
+
+        for (int i = 0; i < numProcesses; i++) {
+            System.out.printf("Enter memory required for process %d (in Bytes): ", i + 1);
+            memoryProcesses[i] = scanner.nextInt();
+        }
+
+        System.out.println("\nPROCESS\tMEMORY REQUIRED\tALLOCATED\tINTERNAL FRAGMENTATION");
+        int totalInternalFragmentation = 0;
+        int numAllocatedBlocks = 0;
+        for (int i = 0; i < numProcesses; i++) {
+            if (memoryProcesses[i] <= blockSize) {
+                System.out.printf(" %d\t\t%d\t\t\t", i + 1, memoryProcesses[i]);
+                System.out.print("YES\t" + (blockSize - memoryProcesses[i]) + "\n");
+                totalInternalFragmentation += blockSize - memoryProcesses[i];
+                numAllocatedBlocks++;
+            }
+        }
+
+        if (numAllocatedBlocks < numBlocks) {
+            System.out.println("\nMemory is Full, Remaining Processes cannot be accommodated");
+        }
+
+        System.out.printf("\n\nTotal Internal Fragmentation is %d\n", totalInternalFragmentation);
+        System.out.printf("Total External Fragmentation is %d\n", externalFragmentation);
+
+        scanner.close();
+    }
+}
+
+
+
+
+# Paging:
+
+import java.util.Scanner;
+
+public class PagingSimulation {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter the number of pages in memory: ");
+        int n = scanner.nextInt();
+
+        int[] page = new int[n];
+
+        System.out.print("Enter page size: ");
+        int ps = scanner.nextInt();
+
+        System.out.print("Enter number of frames: ");
+        int f = scanner.nextInt();
+
+        for (int i = 0; i < n; i++) {
+            page[i] = -1;
+        }
+
+        System.out.println("\nEnter the page table");
+        System.out.println("(Enter -1 if the page is not present in any frame)");
+        System.out.println("\nPage No\tFrame No");
+        System.out.println("-----------------");
+
+        for (int i = 0; i < n; i++) {
+            System.out.printf("%d\t\t", i);
+            page[i] = scanner.nextInt();
+        }
+
+        int choice;
+        do {
+            System.out.print("\nEnter the logical address (i.e., page no & offset): ");
+            int pno = scanner.nextInt();
+            int off = scanner.nextInt();
+
+            if (page[pno] == -1)
+                System.out.println("\nThe required page is not available in any of the frames");
+            else
+                System.out.printf("\nPhysical address (i.e., frame no & offset): %d, %d\n", page[pno], off);
+
+            System.out.print("Do you want to continue (1/0)?: ");
+            choice = scanner.nextInt();
+        } while (choice == 1);
+
+        scanner.close();
+    }
+}
+
+
+
+
+
+## Banker's algorithm:
+
+import java.util.Scanner;
+
+public class BankersAlgorithm {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter the number of processes: ");
+        int n = scanner.nextInt();
+        System.out.print("Enter the number of resources: ");
+        int m = scanner.nextInt();
+
+        // Allocation Matrix
+        int[][] alloc = new int[n][m];
+        System.out.println("Enter Allocation Matrix:");
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                alloc[i][j] = scanner.nextInt();
+            }
+        }
+
+        // Max Matrix
+        int[][] max = new int[n][m];
+        System.out.println("Enter Max Matrix:");
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                max[i][j] = scanner.nextInt();
+            }
+        }
+
+        // Available Resources
+        int[] avail = new int[m];
+        System.out.println("Enter Available Resources:");
+        for (int i = 0; i < m; i++) {
+            avail[i] = scanner.nextInt();
+        }
+
+        // Calculate Need Matrix
+        int[][] need = new int[n][m];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                need[i][j] = max[i][j] - alloc[i][j];
+            }
+        }
+
+        int[] safeSequence = new int[n];
+        int count = 0;
+        boolean[] visited = new boolean[n];
+        int[] work = new int[m];
+        for (int i = 0; i < m; i++) {
+            work[i] = avail[i];
+        }
+
+        while (count < n) {
+            boolean flag = false;
+            for (int i = 0; i < n; i++) {
+                if (!visited[i]) {
+                    int j;
+                    for (j = 0; j < m; j++) {
+                        if (need[i][j] > work[j]) {
+                            break;
+                        }
+                    }
+                    if (j == m) {
+                        safeSequence[count++] = i;
+                        visited[i] = true;
+                        flag = true;
+                        for (j = 0; j < m; j++) {
+                            work[j] += alloc[i][j];
+                        }
+                    }
+                }
+            }
+            if (!flag) {
+                break;
+            }
+        }
+
+        if (count < n) {
+            System.out.println("The system is unsafe!");
+        } else {
+            System.out.println("Following is the SAFE Sequence:");
+            for (int i = 0; i < n; i++) {
+                System.out.print("P" + safeSequence[i]);
+                if (i != n - 1) {
+                    System.out.print(" -> ");
+                }
+            }
+            System.out.println();
+        }
+
+        scanner.close();
+    }
+}
+
+
+
+
+
+## FCFS:
+
+import java.util.Scanner;
+
+public class FCFS_DiskScheduling {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter the number of disk I/O requests: ");
+        int n = scanner.nextInt();
+
+        System.out.print("Enter the current position of the disk head: ");
+        int currentPosition = scanner.nextInt();
+
+        System.out.println("Enter the disk I/O request sequence:");
+        int[] requests = new int[n];
+        for (int i = 0; i < n; i++) {
+            requests[i] = scanner.nextInt();
+        }
+
+        int totalSeekTime = 0;
+        int previousPosition = currentPosition;
+        for (int i = 0; i < n; i++) {
+            int currentRequest = requests[i];
+            totalSeekTime += Math.abs(currentRequest - previousPosition);
+            previousPosition = currentRequest;
+        }
+
+        System.out.println("Total seek time using FCFS: " + totalSeekTime);
+        System.out.println("Seek Sequence is: " + Arrays.toString(requests));
+        scanner.close();
+    }
+}
+
+
+## SSTF:
+
+import java.util.Scanner;
+
+public class SSTF_DiskScheduling {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter the number of disk I/O requests: ");
+        int n = scanner.nextInt();
+
+        System.out.print("Enter the current position of the disk head: ");
+        int currentPosition = scanner.nextInt();
+
+        System.out.println("Enter the disk I/O request sequence:");
+        int[] requests = new int[n];
+        for (int i = 0; i < n; i++) {
+            requests[i] = scanner.nextInt();
+        }
+
+        int totalSeekTime = 0;
+        boolean[] visited = new boolean[n];
+        StringBuilder seekSequence = new StringBuilder();
+        for (int i = 0; i < n; i++) {
+            int shortestDistance = Integer.MAX_VALUE;
+            int nextRequest = -1;
+            for (int j = 0; j < n; j++) {
+                if (!visited[j]) {
+                    int distance = Math.abs(requests[j] - currentPosition);
+                    if (distance < shortestDistance) {
+                        shortestDistance = distance;
+                        nextRequest = requests[j];
+                    }
+                }
+            }
+            visited[nextRequest] = true;
+            totalSeekTime += shortestDistance;
+            seekSequence.append(nextRequest).append(" ");
+            currentPosition = nextRequest;
+        }
+
+        System.out.println("Seek Sequence: " + seekSequence.toString());
+        System.out.println("Total seek time using SSTF: " + totalSeekTime);
+
+        scanner.close();
+    }
+}
+
+
+
+
+
+## SCAN:
+
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class SCAN_DiskScheduling {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter the number of disk I/O requests: ");
+        int n = scanner.nextInt();
+
+        System.out.print("Enter the current position of the disk head: ");
+        int currentPosition = scanner.nextInt();
+
+        System.out.print("Enter the maximum number of cylinders: ");
+        int maxCylinders = scanner.nextInt();
+
+        System.out.println("Enter the disk I/O request sequence:");
+        int[] requests = new int[n];
+        for (int i = 0; i < n; i++) {
+            requests[i] = scanner.nextInt();
+        }
+
+        Arrays.sort(requests);
+
+        System.out.print("Enter the direction (0 for left, 1 for right): ");
+        int direction = scanner.nextInt();
+
+        int totalSeekTime = 0;
+        StringBuilder seekSequence = new StringBuilder();
+        if (direction == 0) { // Left direction
+            for (int i = currentPosition; i >= 0; i--) {
+                if (contains(requests, i)) {
+                    totalSeekTime += Math.abs(currentPosition - i);
+                    seekSequence.append(i).append(" ");
+                    currentPosition = i;
+                }
+            }
+            totalSeekTime += currentPosition;
+            seekSequence.append("0 ");
+            currentPosition = 0;
+            for (int i = 0; i <= maxCylinders; i++) {
+                if (contains(requests, i)) {
+                    totalSeekTime += Math.abs(currentPosition - i);
+                    seekSequence.append(i).append(" ");
+                    currentPosition = i;
+                }
+            }
+        } else { // Right direction
+            for (int i = currentPosition; i <= maxCylinders; i++) {
+                if (contains(requests, i)) {
+                    totalSeekTime += Math.abs(currentPosition - i);
+                    seekSequence.append(i).append(" ");
+                    currentPosition = i;
+                }
+            }
+            totalSeekTime += maxCylinders - currentPosition;
+            seekSequence.append(maxCylinders).append(" ");
+            currentPosition = maxCylinders;
+            for (int i = maxCylinders; i >= 0; i--) {
+                if (contains(requests, i)) {
+                    totalSeekTime += Math.abs(currentPosition - i);
+                    seekSequence.append(i).append(" ");
+                    currentPosition = i;
+                }
+            }
+        }
+
+        System.out.println("Seek Sequence: " + seekSequence.toString().trim());
+        System.out.println("Total seek time using SCAN: " + totalSeekTime);
+
+        scanner.close();
+    }
+
+    private static boolean contains(int[] array, int key) {
+        for (int value : array) {
+            if (value == key) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
+
+
+
+
+## LOOK:
+
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class LOOK_DiskScheduling {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter the number of disk I/O requests: ");
+        int n = scanner.nextInt();
+
+        System.out.print("Enter the current position of the disk head: ");
+        int currentPosition = scanner.nextInt();
+
+        System.out.print("Enter the maximum number of cylinders: ");
+        int maxCylinders = scanner.nextInt();
+
+        System.out.println("Enter the disk I/O request sequence:");
+        int[] requests = new int[n];
+        for (int i = 0; i < n; i++) {
+            requests[i] = scanner.nextInt();
+        }
+
+        Arrays.sort(requests);
+
+        System.out.print("Enter the direction (0 for left, 1 for right): ");
+        int direction = scanner.nextInt();
+
+        int totalSeekTime = 0;
+        StringBuilder seekSequence = new StringBuilder();
+        if (direction == 0) { // Left direction
+            for (int i = currentPosition; i >= 0; i--) {
+                if (contains(requests, i)) {
+                    totalSeekTime += Math.abs(currentPosition - i);
+                    seekSequence.append(i).append(" ");
+                    currentPosition = i;
+                }
+            }
+            for (int i = currentPosition + 1; i <= maxCylinders; i++) {
+                if (contains(requests, i)) {
+                    totalSeekTime += Math.abs(currentPosition - i);
+                    seekSequence.append(i).append(" ");
+                    currentPosition = i;
+                }
+            }
+        } else { // Right direction
+            for (int i = currentPosition; i <= maxCylinders; i++) {
+                if (contains(requests, i)) {
+                    totalSeekTime += Math.abs(currentPosition - i);
+                    seekSequence.append(i).append(" ");
+                    currentPosition = i;
+                }
+            }
+            for (int i = currentPosition - 1; i >= 0; i--) {
+                if (contains(requests, i)) {
+                    totalSeekTime += Math.abs(currentPosition - i);
+                    seekSequence.append(i).append(" ");
+                    currentPosition = i;
+                }
+            }
+        }
+
+        System.out.println("Seek Sequence: " + seekSequence.toString().trim());
+        System.out.println("Total seek time using LOOK: " + totalSeekTime);
+
+        scanner.close();
+    }
+
+    private static boolean contains(int[] array, int key) {
+        for (int value : array) {
+            if (value == key) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
+
+
+
+
+## C-SCAN:
+
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class SCAN_DiskScheduling {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter the number of disk I/O requests: ");
+        int n = scanner.nextInt();
+
+        System.out.print("Enter the current position of the disk head: ");
+        int currentPosition = scanner.nextInt();
+
+        System.out.print("Enter the maximum number of cylinders: ");
+        int maxCylinders = scanner.nextInt();
+
+        System.out.println("Enter the disk I/O request sequence:");
+        int[] requests = new int[n];
+        for (int i = 0; i < n; i++) {
+            requests[i] = scanner.nextInt();
+        }
+
+        Arrays.sort(requests);
+
+        System.out.print("Enter the direction (0 for left, 1 for right): ");
+        int direction = scanner.nextInt();
+
+        int totalSeekTime = 0;
+        StringBuilder seekSequence = new StringBuilder();
+        if (direction == 0) { // Left direction
+            for (int i = currentPosition; i >= 0; i--) {
+                if (contains(requests, i)) {
+                    totalSeekTime += Math.abs(currentPosition - i);
+                    seekSequence.append(i).append(" ");
+                    currentPosition = i;
+                }
+            }
+            totalSeekTime += currentPosition;
+            seekSequence.append("0 ");
+            currentPosition = 0;
+            for (int i = 0; i <= maxCylinders; i++) {
+                if (contains(requests, i)) {
+                    totalSeekTime += Math.abs(currentPosition - i);
+                    seekSequence.append(i).append(" ");
+                    currentPosition = i;
+                }
+            }
+        } else { // Right direction
+            for (int i = currentPosition; i <= maxCylinders; i++) {
+                if (contains(requests, i)) {
+                    totalSeekTime += Math.abs(currentPosition - i);
+                    seekSequence.append(i).append(" ");
+                    currentPosition = i;
+                }
+            }
+            totalSeekTime += maxCylinders - currentPosition;
+            seekSequence.append(maxCylinders).append(" ");
+            currentPosition = 0;
+           for (int i = currentPosition; i <= maxCylinders; i++) {
+                if (contains(requests, i)) {
+                    totalSeekTime += Math.abs(currentPosition - i);
+                    seekSequence.append(i).append(" ");
+                    currentPosition = i;
+                }
+            }
+        }
+
+        System.out.println("Seek Sequence: " + seekSequence.toString().trim());
+        System.out.println("Total seek time using SCAN: " + totalSeekTime);
+
+        scanner.close();
+    }
+
+    private static boolean contains(int[] array, int key) {
+        for (int value : array) {
+            if (value == key) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
 
 
 
