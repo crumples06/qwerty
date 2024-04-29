@@ -395,13 +395,15 @@ public class WorstFitMemoryAllocation {
         System.out.print("Enter the number of memory blocks: ");
         int numBlocks = scanner.nextInt();
 
+        // List<Integer> blockSize = new ArrayList<>();
+
         int[] blockSize = new int[numBlocks];
         boolean[] allocated = new boolean[numBlocks];
 
         System.out.println("Enter the size of each memory block:");
         for (int i = 0; i < numBlocks; i++) {
             System.out.print("Memory Block " + (i + 1) + ": ");
-            blockSize[i] = scanner.nextInt();
+            blockSize[i] = scanner.nextInt();                            // blockSize.add(i, scanner.nextInt());
             allocated[i] = false;
         }
 
@@ -433,6 +435,8 @@ public class WorstFitMemoryAllocation {
             if (worstFitBlock != -1) {
                 allocatedBlock[i] = worstFitBlock;
                 allocated[worstFitBlock] = true;
+                // if(blockSize.get(worstFitBlock) - processSize[i] > 0)
+                //       blockSize.add(WOrstFitBlock+1, blockSize.get(worstFitBlock) - processSize[i]);
             } else {
                 allocatedBlock[i] = -1; // Not allocated
             }
